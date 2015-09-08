@@ -65,8 +65,9 @@ public class DumpCompiledPlanTest extends CompilerTestBase {
 		env.setAsContext();
 		try {
 			// <points path> <centers path> <result path> <num iterations
-			KMeans.main(new String[] {IN_FILE, IN_FILE, OUT_FILE, "123"});
-		} catch(ProgramAbortException pae) {
+			KMeans.main(new String[]{"--points", IN_FILE, "--centers", IN_FILE, "--output", OUT_FILE,
+                    "--iterations", "123"});
+        } catch(ProgramAbortException pae) {
 			// all good.
 		} catch (Exception e) {
 			e.printStackTrace();

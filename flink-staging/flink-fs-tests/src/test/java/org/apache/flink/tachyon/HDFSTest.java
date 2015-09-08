@@ -101,8 +101,8 @@ public class HDFSTest {
 			Assert.assertTrue("Must be HadoopFileSystem", fs instanceof HadoopFileSystem);
 			new DopOneTestEnvironment();
 			try {
-				WordCount.main(new String[]{file.toString(), result.toString()});
-			} catch(Throwable t) {
+				WordCount.main(new String[]{"--text", file.toString(), "--output", result.toString()});
+            } catch(Throwable t) {
 				t.printStackTrace();
 				Assert.fail("Test failed with " + t.getMessage());
 			}
