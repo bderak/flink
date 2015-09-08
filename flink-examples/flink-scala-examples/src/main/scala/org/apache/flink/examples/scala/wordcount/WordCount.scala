@@ -17,6 +17,7 @@
  */
 package org.apache.flink.examples.scala.wordcount
 
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.examples.java.wordcount.util.WordCountData
 
@@ -65,20 +66,21 @@ object WordCount {
   }
 
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (args.length == 2) {
-        textPath = args(0)
-        outputPath = args(1)
+      if (parameterTool.getNumberOfParameters == 2) {
+        textPath = parameterTool.getRequired("text")
+        outputPath = parameterTool.getRequired("output")
         true
       } else {
-        System.err.println("Usage: WordCount <text path> <result path>")
+        System.err.println("Usage: WordCount --text <text path> --output <result path>")
         false
       }
     } else {
       System.out.println("Executing WordCount example with built-in default data.")
       System.out.println("  Provide parameters to read input data from a file.")
-      System.out.println("  Usage: WordCount <text path> <result path>")
+      System.out.println("  Usage: WordCount --text <text path> --output <result path>")
       true
     }
   }

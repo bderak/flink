@@ -66,15 +66,17 @@ public class PageRankITCase extends MultipleProgramsTestBase {
 		compareKeyValuePairsWithDelta(expected, resultPath, " ", 0.01);
 	}
 
-	@Test
-	public void testPageRankSmallNumberOfIterations() throws Exception{
-		PageRankBasic.main(new String[] {verticesPath, edgesPath, resultPath, PageRankData.NUM_VERTICES+"", "3"});
-		expected =  PageRankData.RANKS_AFTER_3_ITERATIONS;
-	}
+    @Test
+    public void testPageRankSmallNumberOfIterations() throws Exception {
+        PageRankBasic.main(new String[]{"--pages", verticesPath, "--links", edgesPath, "--output", resultPath,
+                "--numPages", PageRankData.NUM_VERTICES + "", "--maxIter", "3"});
+        expected = PageRankData.RANKS_AFTER_3_ITERATIONS;
+    }
 
-	@Test
-	public void testPageRankWithConvergenceCriterion() throws Exception {
-		PageRankBasic.main(new String[] {verticesPath, edgesPath, resultPath, PageRankData.NUM_VERTICES+"", "1000"});
-		expected = PageRankData.RANKS_AFTER_EPSILON_0_0001_CONVERGENCE;
-	}
+    @Test
+    public void testPageRankWithConvergenceCriterion() throws Exception {
+        PageRankBasic.main(new String[]{"--pages", verticesPath, "--links", edgesPath, "--output", resultPath,
+                "--numPages", PageRankData.NUM_VERTICES + "", "--maxIter", "1000"});
+        expected = PageRankData.RANKS_AFTER_EPSILON_0_0001_CONVERGENCE;
+    }
 }

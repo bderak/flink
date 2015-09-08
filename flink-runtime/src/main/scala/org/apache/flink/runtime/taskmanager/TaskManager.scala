@@ -1990,8 +1990,8 @@ object TaskManager {
 
           val path = file.getAbsolutePath
 
-          LOG.info(f"Temporary file directory '$path': total $totalSpaceGb GB, " +
-            f"usable $usableSpaceGb GB ($usablePercentage%.2f%% usable)")
+//          LOG.info(f"Temporary file directory '$path': total $totalSpaceGb GB, " +
+//            f"usable $usableSpaceGb GB ($usablePercentage%.2f%% usable)")
         }
       case (_, id) => throw new IllegalArgumentException(s"Temporary file directory #$id is null.")
     }

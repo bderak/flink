@@ -17,6 +17,7 @@
  */
 package org.apache.flink.examples.scala.graph
 
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.examples.java.graph.util.ConnectedComponentsData
 import org.apache.flink.util.Collector
@@ -106,26 +107,27 @@ object ConnectedComponents {
   }
  
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (args.length == 4) {
-        verticesPath = args(0)
-        edgesPath = args(1)
-        outputPath = args(2)
-        maxIterations = args(3).toInt
+      if (parameterTool.getNumberOfParameters == 4) {
+        verticesPath = parameterTool.getRequired("vertices")
+        edgesPath = parameterTool.getRequired("edges")
+        outputPath = parameterTool.getRequired("output")
+        maxIterations = parameterTool.getInt("maxIter")
 
         true
       } else {
-        System.err.println("Usage: ConnectedComponents <vertices path> <edges path> <result path>" +
-          " <max number of iterations>")
+        System.err.println("Usage: ConnectedComponents --vertices <vertices path> --edges " +
+          "<edges path> --output <result path> --maxIter <max number of iterations>")
 
         false
       }
     } else {
       System.out.println("Executing Connected Components example with built-in default data.")
       System.out.println("  Provide parameters to read input data from a file.")
-      System.out.println("  Usage: ConnectedComponents <vertices path> <edges path> <result path>" +
-        " <max number of iterations>")
+      System.out.println("  Usage: ConnectedComponents --vertices <vertices path> --edges " +
+        "<edges path> --output <result path> --maxIter <max number of iterations>")
 
       true
     }

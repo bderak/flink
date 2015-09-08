@@ -20,6 +20,7 @@ package org.apache.flink.examples.scala.graph
 import java.lang.Iterable
 
 import org.apache.flink.api.common.functions.GroupReduceFunction
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.examples.java.graph.util.PageRankData
 import org.apache.flink.api.java.aggregation.Aggregations.SUM
@@ -150,19 +151,20 @@ object PageRankBasic {
   // *************************************************************************
 
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (args.length == 5) {
-        pagesInputPath = args(0)
-        linksInputPath = args(1)
-        outputPath = args(2)
-        numPages = args(3).toLong
-        maxIterations = args(4).toInt
+      if (parameterTool.getNumberOfParameters == 5) {
+        pagesInputPath = parameterTool.getRequired("pages")
+        linksInputPath = parameterTool.getRequired("links")
+        outputPath = parameterTool.getRequired("output")
+        numPages = parameterTool.getInt("numPages")
+        maxIterations = parameterTool.getInt("maxIter")
 
         true
       } else {
-        System.err.println("Usage: PageRankBasic <pages path> <links path> <output path> <num " +
-          "pages> <num iterations>")
+        System.err.println("Usage: PageRankBasic --pages <pages path> --links <links path> " +
+          "--output <output path> --numPages <num pages> --maxIter <num iterations>")
 
         false
       }
@@ -171,8 +173,8 @@ object PageRankBasic {
         "default data.")
       System.out.println("  Provide parameters to read input data from files.")
       System.out.println("  See the documentation for the correct format of input files.")
-      System.out.println("  Usage: PageRankBasic <pages path> <links path> <output path> <num " +
-        "pages> <num iterations>")
+      System.out.println(" Usage: PageRankBasic --pages <pages path> --links <links path> " +
+        "--output <output path> --numPages <num pages> --maxIter <num iterations>")
 
       numPages = PageRankData.getNumberOfPages
 

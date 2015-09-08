@@ -17,6 +17,7 @@
  */
 package org.apache.flink.examples.scala.graph
 
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.examples.java.graph.util.ConnectedComponentsData
 import org.apache.flink.util.Collector
@@ -73,16 +74,17 @@ object  TransitiveClosureNaive {
   private var maxIterations: Int = 10
 
   private def parseParameters(programArguments: Array[String]): Boolean = {
-    if (programArguments.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(programArguments)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (programArguments.length == 3) {
-        edgesPath = programArguments(0)
-        outputPath = programArguments(1)
-        maxIterations = Integer.parseInt(programArguments(2))
+      if (parameterTool.getNumberOfParameters == 3) {
+        edgesPath = parameterTool.getRequired("edges")
+        outputPath = parameterTool.getRequired("output")
+        maxIterations = parameterTool.getInt("maxIter")
       }
       else {
-        System.err.println("Usage: TransitiveClosure <edges path> <result path> <max number of " +
-          "iterations>")
+        System.err.println("Usage: TransitiveClosure --edges <edges path> --output <result path> " +
+          "--maxIter <max number of iterations>")
         return false
       }
     }
@@ -91,8 +93,8 @@ object  TransitiveClosureNaive {
         "built-in default data.")
       System.out.println("  Provide parameters to read input data from files.")
       System.out.println("  See the documentation for the correct format of input files.")
-      System.out.println("  Usage: TransitiveClosure <edges path> <result path> <max number of " +
-        "iterations>")
+      System.out.println("  Usage: TransitiveClosure --edges <edges path> --output <result path> " +
+        "--maxIter <max number of iterations>")
     }
     true
   }

@@ -27,6 +27,7 @@ import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.examples.java.clustering.util.KMeansData;
 import org.apache.flink.api.java.DataSet;
@@ -293,17 +294,19 @@ public class KMeans {
 	private static int numIterations = 10;
 	
 	private static boolean parseParameters(String[] programArguments) {
-		
-		if(programArguments.length > 0) {
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
 			// parse input arguments
 			fileOutput = true;
-			if(programArguments.length == 4) {
-				pointsPath = programArguments[0];
-				centersPath = programArguments[1];
-				outputPath = programArguments[2];
-				numIterations = Integer.parseInt(programArguments[3]);
+			if(parameterTool.getNumberOfParameters() == 4) {
+				pointsPath = parameterTool.getRequired("points");
+				centersPath = parameterTool.getRequired("centers");
+				outputPath = parameterTool.getRequired("output");
+				numIterations = parameterTool.getInt("iterations");
 			} else {
-				System.err.println("Usage: KMeans <points path> <centers path> <result path> <num iterations>");
+				System.err.println("Usage: KMeans --points <points path> --centers <centers path> --output <result path>" +
+						" --iterations <num iterations>");
 				return false;
 			}
 		} else {
@@ -311,7 +314,8 @@ public class KMeans {
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
 			System.out.println("  We provide a data generator to create synthetic input files for this program.");
-			System.out.println("  Usage: KMeans <points path> <centers path> <result path> <num iterations>");
+			System.out.println("  Usage: KMeans --points <points path> --centers <centers path> --output <result path> " +
+					"--iterations <num iterations>");
 		}
 		return true;
 	}

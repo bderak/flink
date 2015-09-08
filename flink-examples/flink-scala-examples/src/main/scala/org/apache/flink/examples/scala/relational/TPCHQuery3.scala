@@ -17,10 +17,9 @@
  */
 package org.apache.flink.examples.scala.relational
 
-import org.apache.flink.api.scala._
-import org.apache.flink.core.fs.FileSystem.WriteMode
-
 import org.apache.flink.api.java.aggregation.Aggregations
+import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.scala._
 
 /**
  * This program implements a modified version of the TPC-H query 3. The
@@ -132,18 +131,19 @@ object TPCHQuery3 {
   private var outputPath: String = null
 
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length == 4) {
-      lineitemPath = args(0)
-      customerPath = args(1)
-      ordersPath = args(2)
-      outputPath = args(3)
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters == 4) {
+      lineitemPath = parameterTool.getRequired("lineitem")
+      customerPath = parameterTool.getRequired("customer")
+      ordersPath = parameterTool.getRequired("orders")
+      outputPath = parameterTool.getRequired("output")
       true
     } else {
       System.err.println("This program expects data from the TPC-H benchmark as input data.\n" +
           " Due to legal restrictions, we can not ship generated data.\n" +
           " You can find the TPC-H data generator at http://www.tpc.org/tpch/.\n" +
-          " Usage: TPCHQuery3 <lineitem-csv path> <customer-csv path>" + 
-                             "<orders-csv path> <result path>")
+          " Usage: TPCHQuery3 --lineitem <lineitem-csv path> --customer <customer-csv path>" +
+                             " --orders <orders-csv path> --output <result path>")
       false
     }
   }

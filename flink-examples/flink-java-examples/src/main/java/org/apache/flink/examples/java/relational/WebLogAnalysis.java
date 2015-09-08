@@ -25,6 +25,7 @@ import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFieldsFir
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -268,16 +269,18 @@ public class WebLogAnalysis {
 	private static String outputPath;
 	
 	private static boolean parseParameters(String[] args) {
-		
-		if(args.length > 0) {
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(args);
+		if(parameterTool.getNumberOfParameters() > 0) {
 			fileOutput = true;
-			if(args.length == 4) {
-				documentsPath = args[0];
-				ranksPath = args[1];
-				visitsPath = args[2];
-				outputPath = args[3];
+			if(parameterTool.getNumberOfParameters() == 4) {
+				documentsPath = parameterTool.getRequired("documents");
+				ranksPath = parameterTool.getRequired("ranks");
+				visitsPath = parameterTool.getRequired("visits");
+				outputPath = parameterTool.getRequired("output");
 			} else {
-				System.err.println("Usage: WebLogAnalysis <documents path> <ranks path> <visits path> <result path>");
+				System.err.println("Usage: WebLogAnalysis --documents <documents path> --ranks <ranks path> " +
+						"--visits <visits path> --output <result path>");
 				return false;
 			}
 		} else {
@@ -285,7 +288,8 @@ public class WebLogAnalysis {
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
 			System.out.println("  We provide a data generator to create synthetic input files for this program.");
-			System.out.println("  Usage: WebLogAnalysis <documents path> <ranks path> <visits path> <result path>");
+			System.out.println("  Usage: WebLogAnalysis --documents <documents path> --ranks <ranks path> " +
+					"--visits <visits path> --output <result path>");
 		}
 		return true;
 	}

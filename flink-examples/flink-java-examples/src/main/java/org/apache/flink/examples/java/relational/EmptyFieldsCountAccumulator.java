@@ -30,6 +30,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.common.functions.RichFilterFunction;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 
 /**
@@ -98,15 +99,16 @@ public class EmptyFieldsCountAccumulator {
 
 	private static boolean parseParameters(final String[] programArguments) {
 
-		if (programArguments.length >= 3) {
-			System.err.println("Usage: FilterAndCountIncompleteLines [<input file path> [<result path>]]");
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if (parameterTool.getNumberOfParameters() >= 3) {
+			System.err.println("Usage: FilterAndCountIncompleteLines [--input <input file path>] [--output <result path>]");
 			return false;
 		}
 
-		if (programArguments.length >= 1) {
-			filePath = programArguments[0];
-			if (programArguments.length == 2) {
-				outputPath = programArguments[1];
+		if (parameterTool.getNumberOfParameters() >= 1) {
+			filePath = parameterTool.getRequired("input");
+			if (parameterTool.getNumberOfParameters() == 2) {
+				outputPath = parameterTool.getRequired("output");
 			}
 		}
 

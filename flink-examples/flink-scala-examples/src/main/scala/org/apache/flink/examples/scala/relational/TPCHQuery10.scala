@@ -17,10 +17,9 @@
  */
 package org.apache.flink.examples.scala.relational
 
-import org.apache.flink.api.scala._
-import org.apache.flink.util.Collector
-
 import org.apache.flink.api.java.aggregation.Aggregations
+import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.scala._
 
 /**
  * This program implements a modified version of the TPC-H query 10. 
@@ -134,19 +133,20 @@ object TPCHQuery10 {
   private var outputPath: String = null
 
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length == 5) {
-      customerPath = args(0)
-      ordersPath = args(1)
-      lineitemPath = args(2)
-      nationPath = args(3)
-      outputPath = args(4)
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters == 5) {
+      customerPath = parameterTool.getRequired("customer")
+      ordersPath = parameterTool.getRequired("orders")
+      lineitemPath = parameterTool.getRequired("lineitem")
+      nationPath = parameterTool.getRequired("nation")
+      outputPath = parameterTool.getRequired("output")
       true
     } else {
       System.err.println("This program expects data from the TPC-H benchmark as input data.\n" +
-          "  Due to legal restrictions, we can not ship generated data.\n" +
-          "  You can find the TPC-H data generator at http://www.tpc.org/tpch/.\n" +
-          "  Usage: TPCHQuery10 <customer-csv path> <orders-csv path> " + 
-                                "<lineitem-csv path> <nation-csv path> <result path>")
+        "  Due to legal restrictions, we can not ship generated data.\n" +
+        "  You can find the TPC-H data generator at http://www.tpc.org/tpch/.\n" +
+        "  Usage: TPCHQuery10 --customer <customer-csv path> --orders <orders-csv path> " +
+        "--lineitem <lineitem-csv path> --nation <nation-csv path> --output <result path>")
       false
     }
   }

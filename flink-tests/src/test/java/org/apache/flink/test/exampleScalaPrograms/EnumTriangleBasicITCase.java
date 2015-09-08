@@ -40,7 +40,7 @@ public class EnumTriangleBasicITCase extends JavaProgramTestBase {
 	
 	@Override
 	protected void testProgram() throws Exception {
-		EnumTrianglesBasic.main(new String[] { edgePath, resultPath });
-	}
+		EnumTrianglesBasic.main(new String[]{"--edges", edgePath, "--output", resultPath});
+    }
 
 }

@@ -30,6 +30,7 @@ import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFieldsFir
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFieldsSecond;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.operators.DeltaIteration;
@@ -195,24 +196,27 @@ public class ConnectedComponents implements ProgramDescription {
 	private static int maxIterations = 10;
 	
 	private static boolean parseParameters(String[] programArguments) {
-		
-		if(programArguments.length > 0) {
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
 			// parse input arguments
 			fileOutput = true;
-			if(programArguments.length == 4) {
-				verticesPath = programArguments[0];
-				edgesPath = programArguments[1];
-				outputPath = programArguments[2];
-				maxIterations = Integer.parseInt(programArguments[3]);
+			if(parameterTool.getNumberOfParameters() == 4) {
+				verticesPath = parameterTool.getRequired("vertices");
+				edgesPath = parameterTool.getRequired("edges");
+				outputPath = parameterTool.getRequired("output");
+				maxIterations = parameterTool.getInt("maxIter");
 			} else {
-				System.err.println("Usage: ConnectedComponents <vertices path> <edges path> <result path> <max number of iterations>");
+				System.err.println("Usage: ConnectedComponents --vertices <vertices path> --edges <edges path> --output " +
+						"<result path> --maxIter <max number of iterations>");
 				return false;
 			}
 		} else {
 			System.out.println("Executing Connected Components example with default parameters and built-in default data.");
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
-			System.out.println("  Usage: ConnectedComponents <vertices path> <edges path> <result path> <max number of iterations>");
+			System.out.println("  Usage: ConnectedComponents --vertices <vertices path> --edges <edges path> --output " +
+					"<result path> --maxIter <max number of iterations>");
 		}
 		return true;
 	}

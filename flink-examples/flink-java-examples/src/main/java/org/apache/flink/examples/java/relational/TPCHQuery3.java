@@ -31,6 +31,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.utils.ParameterTool;
 
 /**
  * This program implements a modified version of the TPC-H query 3. The
@@ -227,22 +228,25 @@ public class TPCHQuery3 {
 	private static String outputPath;
 	
 	private static boolean parseParameters(String[] programArguments) {
-		
-		if(programArguments.length > 0) {
-			if(programArguments.length == 4) {
-				lineitemPath = programArguments[0];
-				customerPath = programArguments[1];
-				ordersPath = programArguments[2];
-				outputPath = programArguments[3];
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
+			if(parameterTool.getNumberOfParameters() == 4) {
+				lineitemPath = parameterTool.getRequired("lineitem");
+				customerPath = parameterTool.getRequired("customer");
+				ordersPath = parameterTool.getRequired("orders");
+				outputPath = parameterTool.getRequired("output");
 			} else {
-				System.err.println("Usage: TPCHQuery3 <lineitem-csv path> <customer-csv path> <orders-csv path> <result path>");
+				System.err.println("Usage: TPCHQuery3 --lineitem <lineitem-csv path> --customer <customer-csv path> " +
+						"--orders <orders-csv path> --result <result path>");
 				return false;
 			}
 		} else {
 			System.err.println("This program expects data from the TPC-H benchmark as input data.\n" +
 								"  Due to legal restrictions, we can not ship generated data.\n" +
 								"  You can find the TPC-H data generator at http://www.tpc.org/tpch/.\n" + 
-								"  Usage: TPCHQuery3 <lineitem-csv path> <customer-csv path> <orders-csv path> <result path>");
+								"  Usage: TPCHQuery3 --lineitem <lineitem-csv path> --customer <customer-csv path> " +
+					"--orders <orders-csv path> --result <result path>");
 			return false;
 		}
 		return true;

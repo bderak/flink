@@ -27,6 +27,7 @@ import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.examples.java.ml.util.LinearRegressionData;
 import org.apache.flink.api.java.DataSet;
@@ -273,15 +274,17 @@ public class LinearRegression {
 
 	private static boolean parseParameters(String[] programArguments) {
 
-		if(programArguments.length > 0) {
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
 			// parse input arguments
 			fileOutput = true;
-			if(programArguments.length == 3) {
-				dataPath = programArguments[0];
-				outputPath = programArguments[1];
-				numIterations = Integer.parseInt(programArguments[2]);
+			if(parameterTool.getNumberOfParameters()  == 3) {
+				dataPath = parameterTool.getRequired("data");
+				outputPath = parameterTool.getRequired("output");
+				numIterations = parameterTool.getInt("iterations");
 			} else {
-				System.err.println("Usage: LinearRegression <data path> <result path> <num iterations>");
+				System.err.println("Usage: LinearRegression --data <data path> --output <result path> --iterations " +
+						"<num iterations>");
 				return false;
 			}
 		} else {
@@ -289,7 +292,8 @@ public class LinearRegression {
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
 			System.out.println("  We provide a data generator to create synthetic input files for this program.");
-			System.out.println("  Usage: LinearRegression <data path> <result path> <num iterations>");
+			System.out.println("  Usage: LinearRegression --data <data path> --output <result path> --iterations " +
+					"<num iterations>");
 		}
 		return true;
 	}

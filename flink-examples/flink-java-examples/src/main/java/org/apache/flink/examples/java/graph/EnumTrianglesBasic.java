@@ -28,6 +28,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -196,22 +197,23 @@ public class EnumTrianglesBasic {
 	// *************************************************************************
 	
 	private static boolean parseParameters(String[] args) {
-	
-		if(args.length > 0) {
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(args);
+		if(parameterTool.getNumberOfParameters() > 0) {
 			// parse input arguments
 			fileOutput = true;
-			if(args.length == 2) {
-				edgePath = args[0];
-				outputPath = args[1];
+			if(parameterTool.getNumberOfParameters() == 2) {
+				edgePath = parameterTool.getRequired("edges");
+				outputPath = parameterTool.getRequired("output");
 			} else {
-				System.err.println("Usage: EnumTriangleBasic <edge path> <result path>");
+				System.err.println("Usage: EnumTriangleBasic --edges <edge path> --output <result path>");
 				return false;
 			}
 		} else {
 			System.out.println("Executing Enum Triangles Basic example with built-in default data.");
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
-			System.out.println("  Usage: EnumTriangleBasic <edge path> <result path>");
+			System.out.println("  Usage: EnumTriangleBasic --edges <edge path> --output <result path>");
 		}
 		return true;
 	}

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Random;
 
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.examples.java.relational.WebLogAnalysis;
 
 /**
@@ -50,14 +51,15 @@ public class WebLogDataGenerator {
 	 */
 	public static void main(String[] args) {
 
+		ParameterTool parameterTool = ParameterTool.fromArgs(args);
 		// parse parameters
-		if (args.length < 2) {
-			System.out.println("WebLogDataGenerator <numberOfDocuments> <numberOfVisits>");
+		if (parameterTool.getNumberOfParameters() < 2) {
+			System.out.println("WebLogDataGenerator --documents <numberOfDocuments> --visits <numberOfVisits>");
 			System.exit(1);
 		}
 		
-		int noDocs = Integer.parseInt(args[0]);
-		int noVisits = Integer.parseInt(args[1]);
+		int noDocs = parameterTool.getInt("documents");
+		int noVisits = parameterTool.getInt("visits");
 		
 		String[] filterKWs = { "editors", "oscillations", "convection" };
 

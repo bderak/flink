@@ -17,16 +17,15 @@
  */
 package org.apache.flink.examples.scala.graph
 
-import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
-import org.apache.flink.api.scala._
-import scala.collection.JavaConverters._
-import org.apache.flink.api.scala.ExecutionEnvironment
 import org.apache.flink.api.common.functions.GroupReduceFunction
-import org.apache.flink.util.Collector
-import org.apache.flink.examples.java.graph.util.EnumTrianglesData
 import org.apache.flink.api.common.operators.Order
-import scala.collection.mutable.MutableList
+import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields
+import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.api.scala.{ExecutionEnvironment, _}
+import org.apache.flink.examples.java.graph.util.EnumTrianglesData
+import org.apache.flink.util.Collector
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 
@@ -210,15 +209,16 @@ object EnumTrianglesOpt {
   // *************************************************************************
 
   private def parseParameters(args: Array[String]): Boolean = {
-    if (args.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(args)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (args.length == 2) {
-        edgePath = args(0)
-        outputPath = args(1)
+      if (parameterTool.getNumberOfParameters == 2) {
+        edgePath = parameterTool.getRequired("edges")
+        outputPath = parameterTool.getRequired("output")
 
         true
       } else {
-        System.err.println("Usage: EnumTriangleOpt <edge path> <result path>")
+        System.err.println("Usage: EnumTriangleOpt --edges <edge path> --output <result path>")
 
         false
       }
@@ -226,7 +226,7 @@ object EnumTrianglesOpt {
       System.out.println("Executing Enum Triangles Optimized example with built-in default data.")
       System.out.println("  Provide parameters to read input data from files.")
       System.out.println("  See the documentation for the correct format of input files.")
-      System.out.println("  Usage: EnumTriangleBasic <edge path> <result path>")
+      System.out.println("  Usage: EnumTriangleOpt --edges <edge path> --output <result path>")
 
       true
     }

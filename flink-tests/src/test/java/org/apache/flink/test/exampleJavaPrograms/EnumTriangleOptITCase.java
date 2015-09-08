@@ -37,10 +37,10 @@ public class EnumTriangleOptITCase extends JavaProgramTestBase {
 	protected void postSubmit() throws Exception {
 		compareResultsByLinesInMemory(EnumTriangleData.TRIANGLES_BY_DEGREE, resultPath);
 	}
-	
+
 	@Override
 	protected void testProgram() throws Exception {
-		EnumTrianglesOpt.main(new String[] { edgePath, resultPath });
+		EnumTrianglesOpt.main(new String[]{"--edges", edgePath, "--output", resultPath});
 	}
 
 }

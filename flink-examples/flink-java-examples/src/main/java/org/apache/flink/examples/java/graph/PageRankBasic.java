@@ -29,6 +29,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.FunctionAnnotation.ForwardedFields;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.util.Collector;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -234,25 +235,28 @@ public class PageRankBasic {
 	private static long numPages = 0;
 	private static int maxIterations = 10;
 	
-	private static boolean parseParameters(String[] args) {
-		
-		if(args.length > 0) {
-			if(args.length == 5) {
+	private static boolean parseParameters(String[] programArguments) {
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
+			if(parameterTool.getNumberOfParameters() == 5) {
 				fileOutput = true;
-				pagesInputPath = args[0];
-				linksInputPath = args[1];
-				outputPath = args[2];
-				numPages = Integer.parseInt(args[3]);
-				maxIterations = Integer.parseInt(args[4]);
+				pagesInputPath = parameterTool.getRequired("pages");
+				linksInputPath = parameterTool.getRequired("links");
+				outputPath = parameterTool.getRequired("output");
+				numPages = parameterTool.getInt("numPages");
+				maxIterations = parameterTool.getInt("maxIter");
 			} else {
-				System.err.println("Usage: PageRankBasic <pages path> <links path> <output path> <num pages> <num iterations>");
+				System.err.println("Usage: PageRankBasic --pages <pages path> --links <links path> --output " +
+						"<output path> --numPages <num pages> --maxIter <num iterations>");
 				return false;
 			}
 		} else {
 			System.out.println("Executing PageRank Basic example with default parameters and built-in default data.");
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
-			System.out.println("  Usage: PageRankBasic <pages path> <links path> <output path> <num pages> <num iterations>");
+			System.out.println("  Usage: PageRankBasic --pages <pages path> --links <links path> --output " +
+					"<output path> --numPages <num pages> --maxIter <num iterations>");
 			
 			numPages = PageRankData.getNumberOfPages();
 		}

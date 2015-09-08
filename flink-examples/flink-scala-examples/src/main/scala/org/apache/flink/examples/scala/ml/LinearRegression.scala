@@ -19,6 +19,7 @@
 package org.apache.flink.examples.scala.ml
 
 import org.apache.flink.api.common.functions._
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
 import org.apache.flink.configuration.Configuration
 import org.apache.flink.examples.java.ml.util.LinearRegressionData
@@ -142,17 +143,19 @@ object LinearRegression {
   private var numIterations: Int = 10
 
   private def parseParameters(programArguments: Array[String]): Boolean = {
-    if (programArguments.length > 0) {
+    val parameterTool = ParameterTool.fromArgs(programArguments)
+    if (parameterTool.getNumberOfParameters > 0) {
       fileOutput = true
-      if (programArguments.length == 3) {
-        dataPath = programArguments(0)
-        outputPath = programArguments(1)
-        numIterations = programArguments(2).toInt
+      if (parameterTool.getNumberOfParameters == 3) {
+        dataPath = parameterTool.getRequired("data")
+        outputPath = parameterTool.getRequired("output")
+        numIterations = parameterTool.getInt("iterations")
 
         true
       }
       else {
-        System.err.println("Usage: LinearRegression <data path> <result path> <num iterations>")
+        System.err.println("Usage: LinearRegression --data <data path> --output <result path> " +
+          "--iterations <num iterations>")
 
         false
       }
@@ -164,7 +167,8 @@ object LinearRegression {
       System.out.println("  See the documentation for the correct format of input files.")
       System.out.println("  We provide a data generator to create synthetic input files for this " +
         "program.")
-      System.out.println("  Usage: LinearRegression <data path> <result path> <num iterations>")
+      System.out.println("  Usage: LinearRegression --data <data path> --output <result path> " +
+        "--iterations <num iterations>")
 
       true
     }

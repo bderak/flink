@@ -19,6 +19,8 @@
 
 package org.apache.flink.examples.java.ml.util;
 
+import org.apache.flink.api.java.utils.ParameterTool;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -58,15 +60,16 @@ public class LinearRegressionDataGenerator {
 	 */
 	public static void main(String[] args) throws IOException {
 
+		ParameterTool parameterTool = ParameterTool.fromArgs(args);
 		// check parameter count
-		if (args.length < 1) {
-			System.out.println("LinearRegressionDataGenerator <numberOfDataPoints> [<seed>]");
+		if (parameterTool.getNumberOfParameters() < 1) {
+			System.out.println("LinearRegressionDataGenerator --dataPoints <numberOfDataPoints> [--seed <seed>]");
 			System.exit(1);
 		}
 
 		// parse parameters
-		final int numDataPoints = Integer.parseInt(args[0]);
-		final long firstSeed = args.length > 1 ? Long.parseLong(args[4]) : DEFAULT_SEED;
+		final int numDataPoints = parameterTool.getInt("dataPoints");
+		final long firstSeed = parameterTool.getLong("seed", DEFAULT_SEED);
 		final Random random = new Random(firstSeed);
 		final String tmpDir = System.getProperty("java.io.tmpdir");
 

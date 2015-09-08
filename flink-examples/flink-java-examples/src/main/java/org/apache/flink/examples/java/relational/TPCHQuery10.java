@@ -29,6 +29,7 @@ import org.apache.flink.api.java.tuple.Tuple6;
 
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.utils.ParameterTool;
 
 /**
  * This program implements a modified version of the TPC-H query 10.
@@ -181,23 +182,26 @@ public class TPCHQuery10 {
 	private static String outputPath;
 	
 	private static boolean parseParameters(String[] programArguments) {
-		
-		if(programArguments.length > 0) {
-			if(programArguments.length == 5) {
-				customerPath = programArguments[0];
-				ordersPath = programArguments[1];
-				lineitemPath = programArguments[2];
-				nationPath = programArguments[3];
-				outputPath = programArguments[4];
+
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if(parameterTool.getNumberOfParameters() > 0) {
+			if(parameterTool.getNumberOfParameters() == 5) {
+				customerPath = parameterTool.getRequired("customer");
+				ordersPath = parameterTool.getRequired("orders");
+				lineitemPath = parameterTool.getRequired("lineitem");
+				nationPath = parameterTool.getRequired("nation");
+				outputPath = parameterTool.getRequired("output");
 			} else {
-				System.err.println("Usage: TPCHQuery10 <customer-csv path> <orders-csv path> <lineitem-csv path> <nation-csv path> <result path>");
+				System.err.println("Usage: TPCHQuery10 --customer <customer-csv path> --orders <orders-csv path> " +
+						"--lineitem <lineitem-csv path> --nation <nation-csv path> --output <result path>");
 				return false;
 			}
 		} else {
 			System.err.println("This program expects data from the TPC-H benchmark as input data.\n" +
 								"  Due to legal restrictions, we can not ship generated data.\n" +
 								"  You can find the TPC-H data generator at http://www.tpc.org/tpch/.\n" + 
-								"  Usage: TPCHQuery10 <customer-csv path> <orders-csv path> <lineitem-csv path> <nation-csv path> <result path>");
+								"  Usage: TPCHQuery10 --customer <customer-csv path> --orders <orders-csv path> " +
+					"--lineitem <lineitem-csv path> --nation <nation-csv path> --output <result path>");
 			return false;
 		}
 		return true;

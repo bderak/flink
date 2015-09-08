@@ -27,6 +27,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.IterativeDataSet;
 import org.apache.flink.api.common.ProgramDescription;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.examples.java.graph.util.ConnectedComponentsData;
 import org.apache.flink.util.Collector;
 
@@ -122,22 +123,25 @@ public class TransitiveClosureNaive implements ProgramDescription {
 
 	private static boolean parseParameters(String[] programArguments) {
 
-		if (programArguments.length > 0) {
+		ParameterTool parameterTool = ParameterTool.fromArgs(programArguments);
+		if (parameterTool.getNumberOfParameters() > 0) {
 			// parse input arguments
 			fileOutput = true;
-			if (programArguments.length == 3) {
-				edgesPath = programArguments[0];
-				outputPath = programArguments[1];
-				maxIterations = Integer.parseInt(programArguments[2]);
+			if (parameterTool.getNumberOfParameters() == 3) {
+				edgesPath = parameterTool.getRequired("edges");
+				outputPath = parameterTool.getRequired("output");
+				maxIterations = parameterTool.getInt("maxIter");
 			} else {
-				System.err.println("Usage: TransitiveClosure <edges path> <result path> <max number of iterations>");
+				System.err.println("Usage: TransitiveClosure --edges <edges path> --output <result path> --maxIter " +
+						"<max number of iterations>");
 				return false;
 			}
 		} else {
 			System.out.println("Executing TransitiveClosure example with default parameters and built-in default data.");
 			System.out.println("  Provide parameters to read input data from files.");
 			System.out.println("  See the documentation for the correct format of input files.");
-			System.out.println("  Usage: TransitiveClosure <edges path> <result path> <max number of iterations>");
+			System.out.println("  Usage: TransitiveClosure --edges <edges path> --output <result path> --maxIter " +
+					"<max number of iterations>");
 		}
 		return true;
 	}

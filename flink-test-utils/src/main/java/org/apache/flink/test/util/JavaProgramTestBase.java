@@ -114,7 +114,7 @@ public abstract class JavaProgramTestBase extends AbstractTestBase {
 			env.getConfig().enableObjectReuse();
 			env.setAsContext();
 
-			// Possibly run the test multiple times
+			// Possibly run the test multiple timesX
 			for (int i = 0; i < numberOfTestRepetitions; i++) {
 				// call the test program
 				try {
